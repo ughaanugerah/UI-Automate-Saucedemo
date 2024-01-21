@@ -12,6 +12,10 @@ Check Out 1 Item
     Select Item                Sauce Labs Backpack
     Get Data Item              Sauce Labs Backpack
     Click Cart
-
+    Validate Item Cart
     Capture Page Screenshot
 
+Looping for
+    FOR    ${data}    IN RANGE    1     5
+        Log    ${data}
+    END
