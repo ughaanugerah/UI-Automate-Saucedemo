@@ -1,4 +1,4 @@
-# Project Title
+# UI-Automate-Saucedemo
 
 ## Automation Project for Saucedemo.com using Robot Framework and Selenium
 
