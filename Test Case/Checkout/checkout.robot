@@ -10,12 +10,9 @@ Resource               Resource/Checkout/asset_checkout.robot
 Check Out 1 Item
     Open Browser And Login
     Select Item                Sauce Labs Backpack
-    Get Data Item              Sauce Labs Backpack
+    Select Item                Sauce Labs Bike Light
     Click Cart
     Validate Item Cart
-    Capture Page Screenshot
-
-Looping for
-    FOR    ${data}    IN RANGE    1     5
-        Log    ${data}
-    END
+    Click Checkout
+    Input Information    Ugha    anugerah    123456
+    Calculate Price
