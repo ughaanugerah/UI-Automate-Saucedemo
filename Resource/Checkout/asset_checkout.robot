@@ -15,6 +15,8 @@ ${Locator_Cart_Price}             (//div[@class='cart_item'])[@Num]//div[@class=
 ${Button_Cart}                    id:shopping_cart_container
 ${Button_Checkout}                id:checkout
 ${Button_Continue}                id:continue
+${Button_Finish}                  id:finish
+
 
 ${Item_Cart_Locator}              //div[@class = 'cart_item']
 
@@ -22,6 +24,11 @@ ${Input_FirstName}                id:first-name
 ${Input_LastName}                 id:last-name
 ${Input_PostalCode}               id:postal-code
 
+${Form_CheckoutComplete}          id:checkout_complete_container
+
+
+${Text_CheckoutCompleteHeader}    //h2[@class ='complete-header']
+${Text_CheckoutComplete}          //div[@class='complete-text']
 
 @{List_Cart}
 
@@ -103,3 +110,11 @@ Clean Data Price
     ${cleaned_value}    Remove String        ${OriginalPrice}    $
     ${float_value}      Convert To Number    ${cleaned_value}
     [Return]    ${float_value}
+
+Finish Transaction
+    Click Button                    ${Button_Finish}
+    Element Should Be Visible       ${Form_CheckoutComplete}
+    ${Wording_Header}            Get Text        ${Text_CheckoutCompleteHeader}
+    ${Wording_Complete}          Get Text        ${Text_CheckoutComplete}
+    Evaluate    $Wording_Header == 'Thank you for your order!'
+    Evaluate    $Wording_Complete == 'Your order has been dispatched, and will arrive just as fast as the pony can get there!'

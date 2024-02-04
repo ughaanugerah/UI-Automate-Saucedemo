@@ -14,5 +14,6 @@ Check Out 1 Item
     Click Cart
     Validate Item Cart
     Click Checkout
-    Input Information    Ugha    anugerah    123456
-    Calculate Price
+    Input Information          Ugha    anugerah    123456
+    #Calculate Price
+    Finish Transaction
