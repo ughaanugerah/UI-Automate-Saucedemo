@@ -6,14 +6,30 @@ Library                Collections
 Resource               Resource/asset_master.robot
 Resource               Resource/Checkout/asset_checkout.robot
 
+Test Setup             Open Browser And Login
+Test Teardown          Close Browser
+
 *** Test Cases ***
 Check Out 1 Item
-    Open Browser And Login
     Select Item                Sauce Labs Backpack
-    Select Item                Sauce Labs Bike Light
     Click Cart
     Validate Item Cart
     Click Checkout
     Input Information          Ugha    anugerah    123456
-    #Calculate Price
+    Calculate Price
+    Calculate Tax
+    Calculate Grand Total
+    Finish Transaction
+
+Check Out 3 Items
+    Select Item                Sauce Labs Backpack
+    Select Item                Test.allTheThings() T-Shirt (Red)
+    Select Item                Sauce Labs Bolt T-Shirt
+    Click Cart
+    Validate Item Cart
+    Click Checkout
+    Input Information          Ugha    anugerah    123456
+    Calculate Price
+    Calculate Tax
+    Calculate Grand Total
     Finish Transaction
