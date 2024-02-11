@@ -16,7 +16,7 @@ ${Button_Cart}                    id:shopping_cart_container
 ${Button_Checkout}                id:checkout
 ${Button_Continue}                id:continue
 ${Button_Finish}                  id:finish
-
+${Button_BackHome}                id:back-to-products
 
 ${Item_Cart_Locator}              //div[@class = 'cart_item']
 
@@ -26,25 +26,25 @@ ${Input_PostalCode}               id:postal-code
 
 ${Form_CheckoutComplete}          id:checkout_complete_container
 
-
+${Text_SummarySubTotal}           //div[@class='summary_subtotal_label']
+${Text_SummaryTax}                //div[@class='summary_tax_label']
+${Text_SummaryGrandTotal}         //div[@class='summary_info_label summary_total_label']
 ${Text_CheckoutCompleteHeader}    //h2[@class ='complete-header']
 ${Text_CheckoutComplete}          //div[@class='complete-text']
 
-@{List_Cart}
 
 *** Keywords ***
 Select Item
     [Arguments]    ${Item}
     ${temp_var}        Create Dictionary
-    Set Global Variable    ${List_Cart}
-    
     ${Button_AddToCart}     Replace String        ${Locator_AddToCart}    @Param        ${Item}
     ${Description}          Replace String        ${Locator_Description}      @Param        ${Item}
     ${Price}                Replace String        ${Locator_Price}            @Param        ${Item}
 
     ${Value_Description}    Get Text    ${Description}
     ${Value_Price}          Get Text    ${Price}
-    Click Element           ${Button_AddToCart}
+    Scroll Element Into View    ${Button_AddToCart}
+    Click Element               ${Button_AddToCart}
 
     ${temp_var}    Create Dictionary    Item=${Item}    Description=${Value_Description}    Price=${Value_Price}
     Append To List    ${List_Cart}    ${temp_var}
@@ -72,7 +72,8 @@ Validate Item Cart
         ${temp_var}    Create Dictionary    Item=${Value_Name}    Description=${Value_Description}    Price=${Value_Price}
         Append To List    ${Expected_Item_Cart}    ${temp_var}
     END
-
+    
+    Log    ${List_Cart}
     Lists Should Be Equal    ${Expected_Item_Cart}    ${List_Cart}
     
 Click Checkout
@@ -90,11 +91,29 @@ Input Information
 
 Calculate Price
     ${Expected_SubTotal}    Get Expected Sub Total
+    ${SubTotalText}    Get Text    ${Text_SummarySubTotal}
+    ${SubTotal}    Clean Data Price    ${SubTotalText}
+    Should Be Equal As Numbers    ${Expected_SubTotal}    ${SubTotal}
+
+    Set Global Variable    ${SubTotal}
+
+Calculate Tax
+    ${Expected_Tax}    Get Expected Tax    ${SubTotal}
     
-    ${SubTotal}    Get Text
+    ${TaxText}        Get Text    ${Text_SummaryTax}
+    ${Tax}        Clean Data Price    ${TaxText}
+    Should Be Equal As Numbers    ${Tax}    ${Expected_Tax}
+
+    Set Global Variable    ${Tax}
+
+Calculate Grand Total
+    ${GrandTotalText}        Get Text    ${Text_SummaryGrandTotal}
+    ${GrandTotal}            Clean Data Price    ${GrandTotalText}
+    
+    ${Expected_GrandTotal}   Evaluate    $SubTotal + $Tax
+    Should Be Equal As Numbers    ${GrandTotal}    ${Expected_GrandTotal}
     
 
-    
     
 Get Expected Sub Total
     ${Sub_Total}    Set Variable    ${0.0}
@@ -105,10 +124,16 @@ Get Expected Sub Total
     END
     [Return]    ${Sub_Total}
 
+Get Expected Tax
+    [Arguments]    ${SubTotal}
+    ${ExpectedTax}    Evaluate    $Subtotal*8/100 
+    ${Tax}    Convert To Number    ${ExpectedTax}    2
+    [Return]    ${Tax}
+    
 Clean Data Price
     [Arguments]    ${OriginalPrice}
-    ${cleaned_value}    Remove String        ${OriginalPrice}    $
-    ${float_value}      Convert To Number    ${cleaned_value}
+    ${cleaned_value}    Split String    ${OriginalPrice}    $
+    ${float_value}      Convert To Number    ${cleaned_value}[1]
     [Return]    ${float_value}
 
 Finish Transaction
@@ -118,3 +143,4 @@ Finish Transaction
     ${Wording_Complete}          Get Text        ${Text_CheckoutComplete}
     Evaluate    $Wording_Header == 'Thank you for your order!'
     Evaluate    $Wording_Complete == 'Your order has been dispatched, and will arrive just as fast as the pony can get there!'
+    Click Button                 ${Button_BackHome}
