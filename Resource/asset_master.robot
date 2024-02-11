@@ -9,3 +9,5 @@ ${BROWSER}             Chrome
 Open Browser And Login
     Open Browser And Get User Login
     Login User    ${UserLogin}[0]
+    @{List_Cart}    Create List
+    Set Global Variable        @{List_Cart}
