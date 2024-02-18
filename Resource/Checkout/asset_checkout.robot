@@ -11,6 +11,8 @@ ${Locator_Price}                  //div[text() = '@Param']/ancestor::div[@class 
 ${Locator_Cart_Name}              (//div[@class='cart_item'])[@Num]//div[@class='inventory_item_name']
 ${Locator_Cart_Description}       (//div[@class='cart_item'])[@Num]//div[@class='inventory_item_desc']
 ${Locator_Cart_Price}             (//div[@class='cart_item'])[@Num]//div[@class='inventory_item_price']
+${Locator_Name}                   //div[@class='inventory_item_name ' and text()='@Param']
+${Locator_Picture}                //img[@class='inventory_item_img' and @alt='@Param']
 
 ${Button_Cart}                    id:shopping_cart_container
 ${Button_Checkout}                id:checkout
@@ -31,6 +33,7 @@ ${Text_SummaryTax}                //div[@class='summary_tax_label']
 ${Text_SummaryGrandTotal}         //div[@class='summary_info_label summary_total_label']
 ${Text_CheckoutCompleteHeader}    //h2[@class ='complete-header']
 ${Text_CheckoutComplete}          //div[@class='complete-text']
+
 
 
 *** Keywords ***
@@ -144,3 +147,16 @@ Finish Transaction
     Evaluate    $Wording_Header == 'Thank you for your order!'
     Evaluate    $Wording_Complete == 'Your order has been dispatched, and will arrive just as fast as the pony can get there!'
     Click Button                 ${Button_BackHome}
+
+Select Card by Picture
+    [Arguments]    ${Item}
+    ${Button_Picture}     Replace String        ${Locator_Picture}    @Param        ${Item}
+    Scroll Element Into View    ${Button_Picture}
+    Click Element               ${Button_Picture}
+
+
+Select Card by Name
+    [Arguments]    ${Item}
+    ${Button_Picture}     Replace String        ${Locator_Name}    @Param        ${Item}
+    Scroll Element Into View    ${Button_Picture}
+    Click Element               ${Button_Picture}

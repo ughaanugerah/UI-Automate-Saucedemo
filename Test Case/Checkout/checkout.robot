@@ -33,3 +33,11 @@ Check Out 3 Items
     Calculate Tax
     Calculate Grand Total
     Finish Transaction
+    
+View Detail Card
+    Select Card By Picture    Sauce Labs Backpack
+    Capture Page Screenshot
+
+View Detail Card By Name
+    Select Card By Name        Sauce Labs Backpack
+    Capture Page Screenshot
