@@ -3,16 +3,14 @@ Library                SeleniumLibrary
 Library                String
 Library                Collections
 
+Resource               Resource/asset_master.robot
+
+
 *** Variables ***
-${Locator_AddToCart}              //div[text() = '@Param']//ancestor::div[@class='inventory_item_label']/following-sibling::div/button
-${Locator_Description}            //div[text() = '@Param']/parent::a/following-sibling::div
-${Locator_Price}                  //div[text() = '@Param']/ancestor::div[@class = 'inventory_item_label']/following-sibling::div/div[@class = 'inventory_item_price']
 
 ${Locator_Cart_Name}              (//div[@class='cart_item'])[@Num]//div[@class='inventory_item_name']
 ${Locator_Cart_Description}       (//div[@class='cart_item'])[@Num]//div[@class='inventory_item_desc']
 ${Locator_Cart_Price}             (//div[@class='cart_item'])[@Num]//div[@class='inventory_item_price']
-${Locator_Name}                   //div[@class='inventory_item_name ' and text()='@Param']
-${Locator_Picture}                //img[@class='inventory_item_img' and @alt='@Param']
 
 ${Button_Cart}                    id:shopping_cart_container
 ${Button_Checkout}                id:checkout
@@ -37,24 +35,12 @@ ${Text_CheckoutComplete}          //div[@class='complete-text']
 
 
 *** Keywords ***
-Select Item
-    [Arguments]    ${Item}
-    ${temp_var}        Create Dictionary
-    ${Button_AddToCart}     Replace String        ${Locator_AddToCart}    @Param        ${Item}
-    ${Description}          Replace String        ${Locator_Description}      @Param        ${Item}
-    ${Price}                Replace String        ${Locator_Price}            @Param        ${Item}
 
-    ${Value_Description}    Get Text    ${Description}
-    ${Value_Price}          Get Text    ${Price}
-    Scroll Element Into View    ${Button_AddToCart}
-    Click Element               ${Button_AddToCart}
-
-    ${temp_var}    Create Dictionary    Item=${Item}    Description=${Value_Description}    Price=${Value_Price}
-    Append To List    ${List_Cart}    ${temp_var}
 
 Click Cart
     Wait Until Element Is Visible    ${Button_Cart}
     Click Element   ${Button_Cart}
+    Validate Page Title        Cart
 
 
 Validate Item Cart
@@ -75,13 +61,14 @@ Validate Item Cart
         ${temp_var}    Create Dictionary    Item=${Value_Name}    Description=${Value_Description}    Price=${Value_Price}
         Append To List    ${Expected_Item_Cart}    ${temp_var}
     END
-    
-    Log    ${List_Cart}
+
     Lists Should Be Equal    ${Expected_Item_Cart}    ${List_Cart}
     
 Click Checkout
     Wait Until Element Is Visible    ${Button_Checkout}
     Click Button                     ${Button_Checkout}
+    Validate Page Title        Checkout Information
+
 
 Input Information
     [Arguments]    ${FirstName}    ${LastName}    ${PostalCode}
@@ -91,6 +78,13 @@ Input Information
     Input Text    ${Input_PostalCode}    ${PostalCode}
     Capture Page Screenshot
     Click Button    ${Button_Continue}
+
+Click Continue to Checkout Overview
+    Validate Page Title        Checkout Overview
+    Calculate Price
+    Calculate Tax
+    Calculate Grand Total
+
 
 Calculate Price
     ${Expected_SubTotal}    Get Expected Sub Total
@@ -133,14 +127,10 @@ Get Expected Tax
     ${Tax}    Convert To Number    ${ExpectedTax}    2
     [Return]    ${Tax}
     
-Clean Data Price
-    [Arguments]    ${OriginalPrice}
-    ${cleaned_value}    Split String    ${OriginalPrice}    $
-    ${float_value}      Convert To Number    ${cleaned_value}[1]
-    [Return]    ${float_value}
 
 Finish Transaction
     Click Button                    ${Button_Finish}
+    Validate Page Title             Checkout Complete
     Element Should Be Visible       ${Form_CheckoutComplete}
     ${Wording_Header}            Get Text        ${Text_CheckoutCompleteHeader}
     ${Wording_Complete}          Get Text        ${Text_CheckoutComplete}
@@ -148,15 +138,3 @@ Finish Transaction
     Evaluate    $Wording_Complete == 'Your order has been dispatched, and will arrive just as fast as the pony can get there!'
     Click Button                 ${Button_BackHome}
 
-Select Card by Picture
-    [Arguments]    ${Item}
-    ${Button_Picture}     Replace String        ${Locator_Picture}    @Param        ${Item}
-    Scroll Element Into View    ${Button_Picture}
-    Click Element               ${Button_Picture}
-
-
-Select Card by Name
-    [Arguments]    ${Item}
-    ${Button_Picture}     Replace String        ${Locator_Name}    @Param        ${Item}
-    Scroll Element Into View    ${Button_Picture}
-    Click Element               ${Button_Picture}

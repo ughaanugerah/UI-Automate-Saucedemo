@@ -5,6 +5,7 @@ Library                Collections
 
 Resource               Resource/asset_master.robot
 Resource               Resource/Checkout/asset_checkout.robot
+Resource               Resource/Main Page/asset_MainPage.robot
 
 Test Setup             Open Browser And Login
 Test Teardown          Close Browser
@@ -29,15 +30,6 @@ Check Out 3 Items
     Validate Item Cart
     Click Checkout
     Input Information          Ugha    anugerah    123456
-    Calculate Price
-    Calculate Tax
-    Calculate Grand Total
+
     Finish Transaction
     
-View Detail Card
-    Select Card By Picture    Sauce Labs Backpack
-    Capture Page Screenshot
-
-View Detail Card By Name
-    Select Card By Name        Sauce Labs Backpack
-    Capture Page Screenshot
