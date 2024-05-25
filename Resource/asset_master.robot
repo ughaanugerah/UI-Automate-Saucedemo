@@ -43,3 +43,19 @@ Validate Page Title
     ${Current_Page}    Get Text    ${Text_Title}
     ${Expected_Page}    Get From Dictionary    ${Title_Dict}    ${Page}
     Should Be Equal As Strings    ${Current_Page}    ${Expected_Page}
+
+Current URL Should Be
+    [Arguments]    ${ExpectedURL}
+    ${CurrentURL}    Get Location
+    Should Be Equal As Strings        ${CurrentURL}    ${ExpectedURL}
+
+
+Data Cleansing
+    [Arguments]     ${data}
+    @{NewData}          Split String        ${data}     \n
+    Remove From List    ${NewData}          0
+    RETURN              ${NewData}
+
+End Test Session
+    Capture Page Screenshot
+    Close Browser

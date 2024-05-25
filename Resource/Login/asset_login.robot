@@ -7,6 +7,7 @@ Resource               Resource/asset_master.robot
 *** Variables ***
 ${Text_UserLogin}       //div[@id = 'login_credentials']
 ${Text_Password}        //div[@class = 'login_password']
+${Text_HomeTitle}       //div[@class ='app_logo']
 
 ${Input_Username}       //input[@id = 'user-name']
 ${Input_Password}       //input[@id = 'password']
@@ -15,17 +16,22 @@ ${Button_Login}         //input[@id = 'login-button']
 
 ${PopUp_Message}        //div[@class = 'error-message-container error']
 
-${Message_Error1}       Epic sadface: Sorry, this user has been locked out.
+
+${LoginURL}            https://www.saucedemo.com/
+${HomePageURL}         https://www.saucedemo.com/inventory.html
 
 @{UserLogin}
 @{Password}
 
+${Message_LockedError}       Epic sadface: Sorry, this user has been locked out.
+${Message_InvalidUser}       Epic sadface: Username and password do not match any user in this service
 
 *** Keywords ***
-Open Browser And Get User Login
+I am on the login page
     Open Browser    ${URL}    ${BROWSER}
     Maximize Browser Window
 
+I get login user from login page
     @{UserLogin}    Create List
     @{Password}     Create List
 
@@ -38,19 +44,30 @@ Open Browser And Get User Login
     Set Global Variable    ${UserLogin}
     Set Global Variable    ${Password}
 
-Data Cleansing
-    [Arguments]     ${data}
-    @{NewData}          Split String        ${data}     \n
-    Remove From List    ${NewData}          0
-    RETURN              ${NewData}
-
-Login User
-    [Arguments]     ${User}     ${Pass}=${Password}[0]
+I login with Username
+    [Arguments]     ${User}
     Input Text      ${Input_Username}   ${User}
+
+I Login With Password
+    [Arguments]    ${Pass}=${Password}[0]
     Input Text      ${Input_Password}   ${Pass}
     Click Element   ${Button_Login}
+
+I Should Successfully Login
+    Title Should Be    Swag Labs
+    Current URL Should Be    ${HomePageURL}
+
+I Should Failed Login
+    Title Should Be    Swag Labs
+    Current URL Should Be    ${LoginURL}
+
+I Should See Locked User Error Message
+    Validate Message Error    ${Message_LockedError}
+
+I Should See Invalid User Error Message
+    Validate Message Error    ${Message_InvalidUser}
 
 Validate Message Error
     [Arguments]     ${Expected_Message}
     ${Message}  Get Text    ${PopUp_Message}
-    Evaluate    $Message == $Expected_Message
+    Should Be Equal As Strings    ${Message}    ${Expected_Message}
