@@ -4,6 +4,7 @@ Library                String
 Library                Collections
 
 Resource               Resource/asset_master.robot
+Resource               Resource/Main Page/asset_MainPage.robot
 
 
 *** Variables ***
@@ -26,21 +27,52 @@ ${Input_PostalCode}               id:postal-code
 
 ${Form_CheckoutComplete}          id:checkout_complete_container
 
-${Text_SummarySubTotal}           //div[@class='summary_subtotal_label']
-${Text_SummaryTax}                //div[@class='summary_tax_label']
-${Text_SummaryGrandTotal}         //div[@class='summary_info_label summary_total_label']
+${Text_PaymentInformationLabel}   //div[@data-test='payment-info-label']
+${Text_PaymentInformationValue}   //div[@data-test='payment-info-value']
+${Text_ShippingInformationLabel}  //div[@data-test='shipping-info-value']
+${Text_ShippingInformationValue}  //div[@data-test='shipping-info-value']
+${Text_PriceTotalLabel}           //div[@data-test='total-info-label']
+${Text_ItemTotal}                 //div[@data-test='subtotal-label']
+${Text_Tax}                       //div[@data-test='tax-label']
+${Text_Total}                     //div[@data-test='total-label']
 ${Text_CheckoutCompleteHeader}    //h2[@class ='complete-header']
 ${Text_CheckoutComplete}          //div[@class='complete-text']
+${Text_ErrorMessage}              //h3[@data-test='error']
 
 
 
 *** Keywords ***
-
+Select Item Then Open Cart
+    [Arguments]    ${Item_Name}
+    Select Item                ${Item_Name}
+    Click Cart
 
 Click Cart
     Wait Until Element Is Visible    ${Button_Cart}
     Click Element   ${Button_Cart}
     Validate Page Title        Cart
+
+Validate Checkout Information Page
+    Validate Page Title        Checkout Information
+    Element Should Be Visible    ${Input_FirstName}
+    Element Should Be Visible    ${Input_LastName}
+    Element Should Be Visible    ${Input_PostalCode}
+
+Validate Checkout Overview Page
+    Validate Page Title          Checkout Overview
+    Element Should Be Visible    ${Text_PaymentInformationLabel}
+    Element Should Be Visible    ${Text_PaymentInformationValue}
+    Element Should Be Visible    ${Text_ShippingInformationLabel}
+    Element Should Be Visible    ${Text_ShippingInformationValue}
+    Element Should Be Visible    ${Text_PriceTotalLabel}
+    Element Should Be Visible    ${Text_ItemTotal}
+    Element Should Be Visible    ${Text_Tax}
+    Element Should Be Visible    ${Text_Total}
+
+Validate Error Message Text
+    [Arguments]     ${Expected_Message}
+    ${Message}  Get Text    ${Text_ErrorMessage}
+    Should Be Equal As Strings    ${Message}    ${Expected_Message}
 
 
 Validate Item Cart
@@ -69,7 +101,6 @@ Click Checkout
     Click Button                     ${Button_Checkout}
     Validate Page Title        Checkout Information
 
-
 Input Information
     [Arguments]    ${FirstName}    ${LastName}    ${PostalCode}
     Wait Until Element Is Visible    ${Input_FirstName}
@@ -85,12 +116,13 @@ Click Continue to Checkout Overview
     Calculate Tax
     Calculate Grand Total
 
+Validate Item Total Price
+    ${Expected_SubTotal}    Get Expected Sub Total
+    Should Be Equal As Numbers    ${Expected_SubTotal}    ${SubTotal}
 
 Calculate Price
-    ${Expected_SubTotal}    Get Expected Sub Total
-    ${SubTotalText}    Get Text    ${Text_SummarySubTotal}
+    ${SubTotalText}    Get Text    ${Text_ItemTotal}
     ${SubTotal}    Clean Data Price    ${SubTotalText}
-    Should Be Equal As Numbers    ${Expected_SubTotal}    ${SubTotal}
 
     Set Global Variable    ${SubTotal}
 
@@ -126,7 +158,6 @@ Get Expected Tax
     ${ExpectedTax}    Evaluate    $Subtotal*8/100 
     ${Tax}    Convert To Number    ${ExpectedTax}    2
     [Return]    ${Tax}
-    
 
 Finish Transaction
     Click Button                    ${Button_Finish}

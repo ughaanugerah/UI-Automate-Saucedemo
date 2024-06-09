@@ -17,8 +17,10 @@ ${Text_Title}            //span[@class = 'title']
 
 *** Keywords ***
 Open Browser And Login
-    Open Browser And Get User Login
-    Login User    ${UserLogin}[0]
+    I am on the login page
+    I get login user from login page
+    I Login With Username        ${UserLogin}[0]
+    I Login With Password
     @{List_Cart}    Create List
     Set Global Variable        @{List_Cart}
 
