@@ -39,10 +39,26 @@ Check Checkout Information Form Invalid Input on Postal Code
     When I Input Empty On Postal Code Personal Information
     Then Error Message On Checkout Information Will Visible    Error: Postal Code is required
 
-Check Checkout Overview on Item Total
+Check Sub Total on Checkout Overview
     Given I Add 1 Item To Cart    Sauce Labs Backpack
     And I Click Checkout Button
     And I Input Valid Personal Information
     When I Calculate Item Price
     Then Item Total Price Will Be Sum Of All Items
+
+Check Tax Item on Checkout Overview
+    Given I Add 1 Item To Cart    Sauce Labs Backpack
+    And I Click Checkout Button
+    And I Input Valid Personal Information
+    When I Calculate Item Tax
+    Then Item Total Price Will Be Sum Of All Items
+
+Check Item Total on Checkout Overview
+    Given I Add 1 Item To Cart    Sauce Labs Backpack
+    And I Click Checkout Button
+    And I Input Valid Personal Information
+    When I Calculate Item Tax
+    Then Item Total Price Will Be Sum Of All Items
+
+
 

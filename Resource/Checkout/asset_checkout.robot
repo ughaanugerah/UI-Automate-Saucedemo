@@ -120,30 +120,6 @@ Validate Item Total Price
     ${Expected_SubTotal}    Get Expected Sub Total
     Should Be Equal As Numbers    ${Expected_SubTotal}    ${SubTotal}
 
-Calculate Price
-    ${SubTotalText}    Get Text    ${Text_ItemTotal}
-    ${SubTotal}    Clean Data Price    ${SubTotalText}
-
-    Set Global Variable    ${SubTotal}
-
-Calculate Tax
-    ${Expected_Tax}    Get Expected Tax    ${SubTotal}
-    
-    ${TaxText}        Get Text    ${Text_SummaryTax}
-    ${Tax}        Clean Data Price    ${TaxText}
-    Should Be Equal As Numbers    ${Tax}    ${Expected_Tax}
-
-    Set Global Variable    ${Tax}
-
-Calculate Grand Total
-    ${GrandTotalText}        Get Text    ${Text_SummaryGrandTotal}
-    ${GrandTotal}            Clean Data Price    ${GrandTotalText}
-    
-    ${Expected_GrandTotal}   Evaluate    $SubTotal + $Tax
-    Should Be Equal As Numbers    ${GrandTotal}    ${Expected_GrandTotal}
-    
-
-    
 Get Expected Sub Total
     ${Sub_Total}    Set Variable    ${0.0}
     FOR     ${Data}    IN    @{List_Cart}
@@ -153,11 +129,36 @@ Get Expected Sub Total
     END
     [Return]    ${Sub_Total}
 
+Calculate Price
+    ${SubTotalText}    Get Text    ${Text_ItemTotal}
+    ${SubTotal}    Clean Data Price    ${SubTotalText}
+
+    Set Global Variable    ${SubTotal}
+
+Calculate Tax
+    ${TaxText}        Get Text    ${Text_Tax}
+    ${Tax}        Clean Data Price    ${TaxText}
+    Set Global Variable    ${Tax}
+
+Validate Item Tax
+    ${Expected_Tax}    Get Expected Tax    ${SubTotal}
+    Should Be Equal As Numbers    ${Tax}    ${Expected_Tax}
+
 Get Expected Tax
     [Arguments]    ${SubTotal}
-    ${ExpectedTax}    Evaluate    $Subtotal*8/100 
+    ${ExpectedTax}    Evaluate    $Subtotal*8/100
     ${Tax}    Convert To Number    ${ExpectedTax}    2
     [Return]    ${Tax}
+
+Calculate Grand Total
+    ${GrandTotalText}        Get Text    ${Text_SummaryGrandTotal}
+    ${GrandTotal}            Clean Data Price    ${GrandTotalText}
+
+    ${Expected_GrandTotal}   Evaluate    $SubTotal + $Tax
+    Should Be Equal As Numbers    ${GrandTotal}    ${Expected_GrandTotal}
+
+
+
 
 Finish Transaction
     Click Button                    ${Button_Finish}

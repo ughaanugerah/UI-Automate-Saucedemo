@@ -38,6 +38,9 @@ I Input Empty On Postal Code Personal Information
 I Calculate Item Price
     Calculate Price
 
+I Calculate Item Tax
+    Calculate Tax
+
 Checkout Information Form Will Visible
     Validate Checkout Information Page
 
@@ -50,3 +53,6 @@ Error Message On Checkout Information Will Visible
 
 Item Total Price Will Be Sum of All Items
     Validate Item Total Price
+
+Item Total Tax Will Be 8 Percent
+    Validate Item Tax
